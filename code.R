@@ -19,9 +19,12 @@ library(RSQLite)
 # confidential to protect the anonymity of individuals. Such figures are not 
 # included in any totals.
 
-asylum_all <- read.csv("data/unhcr_popstats_export_asylum_seekers_all_data.csv")
-population <- read.csv("data/unhcr_popstats_export_resettlement_all_data.csv")
-pers_concern <- read.csv("data/unhcr_popstats_export_persons_of_concern_all_data.csv")
+asylum_all <- read.csv("data/unhcr_popstats_export_asylum_seekers_all_data.csv",
+                       skip = 4)
+time_series <- read.csv("data/unhcr_popstats_export_time_series_all_data.csv", 
+                       skip = 3)
+pers_concern <- read.csv("data/unhcr_popstats_export_persons_of_concern_all_data.csv",
+                         skip = 3)
 
 # asylum_month specfic description: this dataset presents information about asylum a
 # applications lodged in 38 European and 6 non-European countries. 
@@ -30,27 +33,29 @@ pers_concern <- read.csv("data/unhcr_popstats_export_persons_of_concern_all_data
 # with courts. For some countries, the monthly data are available since 1999 
 #while for others at a later period.
 
-asylum_month <- 
-  read.csv("data/unhcr_popstats_export_asylum_seekers_monthly_all_data.csv")
+asylum_month <- read.csv("data/unhcr_popstats_export_asylum_seekers_monthly_all_data.csv", 
+                         skip = 3)
 
-demographics <- read.csv("data/unhcr_popstats_export_demographics_all_data.csv")
+demographics <- read.csv("data/unhcr_popstats_export_demographics_all_data.csv",
+                         skip = 3)
 
 # Resettlement specific description: This page presents information on resettlement 
 # arrivals of refugees, with or without UNHCR assistance. This dataset is based 
 # on Government statistics and, in principle, excludes humanitarian admissions.
 
-resettlement <- read.csv("data/unhcr_popstats_export_resettlement_all_data.csv")
+resettlement <- read.csv("data/unhcr_popstats_export_resettlement_all_data.csv",
+                         skip = 3)
 
 
 # Integrating the 5 tables into a databse  --------------------------
 
-con <- dbConnect(SQLite(), dbname = "data/UNHRC.sqlite")
-dbWriteTable(con, "asylum_all", asylum_all)
-dbWriteTable(con, "asylum_month", asylum_month)
-dbWriteTable(con, "demographics", demographics)
-dbWriteTable(con, "resettlement", resettlement)
-dbWriteTable(con, "population", population)
-dbWriteTable(con, "pers_concern", pers_concern)
-dbListTables(con)
+unhcr <- dbConnect(SQLite(), dbname = "data/UNHRC.sqlite")
+dbWriteTable(unhcr, "asylum_all", asylum_all)
+dbWriteTable(unhcr, "asylum_month", asylum_month)
+dbWriteTable(unhcr, "demographics", demographics)
+dbWriteTable(unhcr, "resettlement", resettlement)
+dbWriteTable(unhcr, "time_series", time_series)
+dbWriteTable(unhcr, "pers_concern", pers_concern)
+dbListTables(unhcr)
 
 
