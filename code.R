@@ -8,9 +8,9 @@ library(dbplyr)
 library(DBI)
 library(RSQLite)
 
-## Part 1: Reading the data and putting it in a database
+## Part 1: Reading the data and putting it in a database  ---------------------------
 
-# Reading the data
+# Reading the data  ---------------------------
 
 # UNHCR description of all data: each row of data represents the information about 
 # UNHCR's populations of concern for a given year and country of residence and/or 
@@ -42,7 +42,7 @@ demographics <- read.csv("data/unhcr_popstats_export_demographics_all_data.csv")
 resettlement <- read.csv("data/unhcr_popstats_export_resettlement_all_data.csv")
 
 
-# Integrating the 5 tables downloaded from UNHRC into a databse
+# Integrating the 5 tables into a databse  --------------------------
 
 con <- dbConnect(SQLite(), dbname = "data/UNHRC.sqlite")
 dbWriteTable(con, "asylum_all", asylum_all)
