@@ -7,6 +7,8 @@ library(tidyverse)
 library(dbplyr)
 library(DBI)
 library(RSQLite)
+library(stringr)
+
 
 ## Part 1: Reading the data and putting it in a database  ---------------------------
 
@@ -58,4 +60,29 @@ dbWriteTable(unhcr, "time_series", time_series)
 dbWriteTable(unhcr, "pers_concern", pers_concern)
 dbListTables(unhcr)
 
+# Tidying the demographics dataframe: creating a column for age and one for gender, 
+  # ensuring the format is consistent, and changing column names.
+
+demographicsTidy <- 
+  demographics %>% 
+  select(-F..Total, -M..Total) %>% 
+  gather(key = gender_age, value = value,
+         -Location.Name,-Country...territory.of.asylum.residence, -Year) %>% 
+  separate(col=gender_age, into=c("gender", "age"), sep="\\.", extra = "merge") %>% 
+  rename(country_asylum_residence=Country...territory.of.asylum.residence, 
+         location_asylum_residence=Location.Name, year=Year)
+
+demographicsTidy$age <- str_replace_all(demographicsTidy$age, "\\.", "-")
+demographicsTidy$age <- str_replace_all(demographicsTidy$age, "-$|^-", "")
+
+demographicsTidy$value <- as.numeric(demographicsTidy$value) 
+
+# Merging time_series and resettlement
+
+resettlement$Population.type <- rep("Resettled",nrow(resettlement))
+merged <- rbind(time_series, resettlement)
+
+# To check that the two dataframes were joined correctly, we perform a count of the
+# observations contained in the unmerged datasets and in the merged one:
+sum(nrow(resettlement), nrow(time_series))==nrow(merged)
 
